@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il mondo è mio</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #0a0a0a;
+    color: #f0ede6;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 2px;
+    padding: 2.5rem;
+  }
+
+  .vision {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: normal;
+    color: #f0ede6;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+
+  .dates {
+    font-size: 12px;
+    color: #444;
+    margin-bottom: 2rem;
+    font-family: 'Courier New', monospace;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #1e1e1e;
+    border: 1px solid #1e1e1e;
+    margin-bottom: 2rem;
+  }
+
+  .stat {
+    background: #111;
+    padding: 1rem 0.75rem;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 26px;
+    font-weight: normal;
+    color: #f0ede6;
+    display: block;
+    font-family: 'Courier New', monospace;
+  }
+
+  .stat-lbl {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #444;
+    margin-top: 4px;
+    display: block;
+  }
+
+  .bar-section { margin-bottom: 2rem; }
+
+  .bar-track {
+    height: 2px;
+    background: #1e1e1e;
+    margin-bottom: 8px;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: #f0ede6;
+    transition: width 0.5s ease;
+  }
+
+  .bar-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #444;
+    font-family: 'Courier New', monospace;
+  }
+
+  .btn-main {
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid #333;
+    color: #f0ede6;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Georgia', serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 0.75rem;
+  }
+
+  .btn-main:hover { background: #1a1a1a; border-color: #555; }
+
+  .btn-main.done {
+    border-color: #3a5a3a;
+    color: #7ab87a;
+    background: #0d1a0d;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-sec {
+    flex: 1;
+    padding: 0.6rem;
+    background: transparent;
+    border: 1px solid #1e1e1e;
+    color: #444;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Georgia', serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-sec:hover { border-color: #333; color: #777; }
+
+  .toast {
+    height: 16px;
+    font-size: 11px;
+    color: #555;
+    text-align: center;
+    margin-top: 0.75rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #1a1a1a;
+    margin: 2rem 0 1.5rem;
+  }
+
+  .dots-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #333;
+    margin-bottom: 0.75rem;
+  }
+
+  .dot-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    background: #1a1a1a;
+    border-radius: 1px;
+    transition: background 0.2s;
+  }
+
+  .dot.done { background: #f0ede6; opacity: 0.7; }
+  .dot.today { outline: 1px solid #555; outline-offset: 2px; }
+  .dot.done.today { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="card">
+  <p class="vision">Vision</p>
+  <h1>Il mondo è mio</h1>
+  <p class="dates">01.05.2026 — 01.05.2027</p>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-val" id="s-fatti">0</span>
+      <span class="stat-lbl">Fatti</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val" id="s-rimasti">365</span>
+      <span class="stat-lbl">Rimasti</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val" id="s-streak">0</span>
+      <span class="stat-lbl">Streak</span>
+    </div>
+  </div>
+
+  <div class="bar-section">
+    <div class="bar-track"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+    <div class="bar-meta">
+      <span id="pct-label">0%</span>
+      <span>365 giorni</span>
+    </div>
+  </div>
+
+  <button class="btn-main" id="btn-check" onclick="toggleToday()">Segna oggi</button>
+
+  <div class="btn-row">
+    <button class="btn-sec" onclick="undo()">↩ Annulla ultimo</button>
+    <button class="btn-sec" onclick="resetConfirm()">✕ Reset</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <hr class="divider">
+
+  <p class="dots-label">Ultimi 60 giorni</p>
+  <div class="dot-grid" id="dot-grid"></div>
+</div>
+
+<script>
+const START = new Date('2026-05-01');
+const END   = new Date('2027-05-01');
+const TOTAL = Math.round((END - START) / 86400000);
+const KEY   = 'ilmondoemio_v2';
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || { days: [] }; }
+  catch { return { days: [] }; }
+}
+
+function save(data) {
+  try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {}
+}
+
+function calcStreak(days) {
+  if (!days.length) return 0;
+  const sorted = [...days].sort();
+  let streak = 0;
+  let check = todayStr();
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    if (sorted[i] === check) {
+      streak++;
+      const d = new Date(check);
+      d.setDate(d.getDate() - 1);
+      check = d.toISOString().slice(0, 10);
+    } else if (sorted[i] < check) break;
+  }
+  return streak;
+}
+
+function render() {
+  const data = load();
+  const days = data.days || [];
+  const today = todayStr();
+  const doneToday = days.includes(today);
+
+  const elapsed = Math.max(0, Math.round((new Date(today) - START) / 86400000));
+  const fatti = days.length;
+  const rimasti = Math.max(0, TOTAL - elapsed);
+  const pct = Math.round(fatti / TOTAL * 100);
+
+  document.getElementById('s-fatti').textContent = fatti;
+  document.getElementById('s-rimasti').textContent = rimasti;
+  document.getElementById('s-streak').textContent = calcStreak(days);
+  document.getElementById('bar').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+
+  const btn = document.getElementById('btn-check');
+  if (doneToday) {
+    btn.textContent = 'Oggi segnato ✓';
+    btn.className = 'btn-main done';
+  } else {
+    btn.textContent = 'Segna oggi';
+    btn.className = 'btn-main';
+  }
+
+  const grid = document.getElementById('dot-grid');
+  grid.innerHTML = '';
+  for (let i = 59; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    const dot = document.createElement('div');
+    let cls = 'dot';
+    if (days.includes(ds)) cls += ' done';
+    if (ds === today) cls += ' today';
+    dot.className = cls;
+    dot.title = ds;
+    grid.appendChild(dot);
+  }
+}
+
+function toggleToday() {
+  const data = load();
+  const today = todayStr();
+  const idx = data.days.indexOf(today);
+  if (idx === -1) {
+    data.days.push(today);
+    showToast('giorno segnato — ' + today);
+  } else {
+    data.days.splice(idx, 1);
+    showToast('rimosso — ' + today);
+  }
+  save(data);
+  render();
+}
+
+function undo() {
+  const data = load();
+  if (!data.days.length) { showToast('niente da annullare'); return; }
+  const sorted = [...data.days].sort();
+  const last = sorted[sorted.length - 1];
+  data.days = data.days.filter(d => d !== last);
+  save(data);
+  showToast('annullato: ' + last);
+  render();
+}
+
+function resetConfirm() {
+  if (confirm('Sei sicuro? Tutti i dati verranno cancellati.')) {
+    save({ days: [] });
+    showToast('reset effettuato');
+    render();
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  setTimeout(() => { t.textContent = ''; }, 3000);
+}
+
+render();
+</script>
+</body>
+</html>
