@@ -1,590 +1,141 @@
-                                                                                                                      
-  <!DOCTYPE html>                                                                 
-  <html lang="it">                                                                                                    
-  <head>                                                                                                                  <meta charset="UTF-8">                                                                                            
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                <title>Il Mondo È Mio</title>                                                                                   
-    <style>
-      :root {
-        --gold:       #c8a96e;
-        --gold-light: #f0d060;
-        --gold-glow:  #ffb830;
-        --ivory:      #f5e6c8;
-        --amber:      #e07a00;
-        --deep:       #07050e;
-      }
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Il Mondo È Mio</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
 
-      body {
-        min-height: 100vh;
-        background: var(--deep);
-        font-family: 'Georgia', 'Times New Roman', serif;
-        color: var(--ivory);
-        overflow-x: hidden;
-      }
+    body {
+      background:
+        linear-gradient(rgba(7,5,14,0.45), rgba(7,5,14,0.45)),
+        url('scala.jpg') center center / cover no-repeat;
+      background-attachment: local;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      min-height: 100vh;
+    }
 
-      #cosmos {
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-      }
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: center;
+      max-width: 600px;
+    }
 
-      .wrapper {
-        position: relative;
-        z-index: 1;
-        max-width: 740px;
-        margin: 0 auto;
-        padding: 56px 24px 90px;
-      }
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: rgba(200,169,110,0.10);
+      border: 1px solid rgba(200,169,110,0.22);
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
 
-      .header {
-        text-align: center;
-        margin-bottom: 64px;
-      }
+    .dot:hover {
+      background: rgba(200,169,110,0.30);
+      border-color: rgba(200,169,110,0.55);
+    }
 
-      .eyebrow {
-        font-size: 0.62rem;
-        letter-spacing: 0.45em;
-        text-transform: uppercase;
-        color: rgba(245,230,200,0.38);
-        margin-bottom: 20px;
-      }
+    .dot.done {
+      background: #ffb830;
+      border-color: #f0d060;
+      box-shadow: 0 0 5px rgba(255,184,48,0.9), 0 0 10px rgba(255,184,48,0.4);
+    }
 
-      .title {
-        font-size: clamp(2.4rem, 8vw, 5rem);
-        font-weight: 400;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        line-height: 1.05;
-        color: var(--gold-light);
-        text-shadow:
-          0 0 20px rgba(255,215,70,0.75),
-          0 0 60px rgba(255,175,20,0.35),
-          0 0 120px rgba(255,120,0,0.18);
-        margin-bottom: 16px;
-      }
+    .dot.today:not(.done) {
+      background: rgba(200,169,110,0.28);
+      border-color: #c8a96e;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
 
-      .date-range {
-        font-size: 0.72rem;
-        letter-spacing: 0.32em;
-        color: rgba(245,230,200,0.32);
-        text-transform: uppercase;
-      }
+    .dot.today.done {
+      animation: goldpulse 2.5s ease-in-out infinite;
+    }
 
-      .progress-hero {
-        text-align: center;
-        margin-bottom: 56px;
-      }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(200,169,110,0.4); }
+      50%       { box-shadow: 0 0 0 3px rgba(200,169,110,0.15), 0 0 8px rgba(200,169,110,0.5); }
+    }
 
-      .pct-wrap {
-        display: inline-flex;
-        align-items: flex-start;
-        line-height: 1;
-        margin-bottom: 18px;
-      }
+    @keyframes goldpulse {
+      0%, 100% { box-shadow: 0 0 5px rgba(255,184,48,0.9), 0 0 10px rgba(255,184,48,0.4); }
+      50%       { box-shadow: 0 0 8px rgba(255,184,48,1), 0 0 22px rgba(255,184,48,0.6); }
+    }
+  </style>
+</head>
+<body>
 
-      .pct-value {
-        font-size: clamp(6rem, 22vw, 13rem);
-        font-weight: 100;
-        letter-spacing: -0.04em;
-        color: var(--gold-light);
-        text-shadow:
-          0 0 30px rgba(255,215,70,0.85),
-          0 0 80px rgba(255,175,20,0.45),
-          0 0 150px rgba(255,120,0,0.22);
-      }
+<div class="grid" id="grid"></div>
 
-      .pct-sym {
-        font-size: clamp(2rem, 7vw, 4.5rem);
-        font-weight: 200;
-        color: var(--gold);
-        padding-top: 1rem;
-        opacity: 0.75;
-      }
+<script>
+  const START = new Date('2026-05-01T00:00:00');
+  const TOTAL = 365;
+  const KEY   = 'ilmondoemio_v2';
 
-      .bar-track {
-        width: 100%;
-        height: 1px;
-        background: rgba(200,169,110,0.12);
-        margin-bottom: 16px;
-        overflow: hidden;
-      }
-
-      .bar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--amber), var(--gold-light));
-        box-shadow: 0 0 12px rgba(255,180,30,0.55);
-        transition: width 1.2s cubic-bezier(.4,0,.2,1);
-      }
-
-      .days-label {
-        font-size: 0.78rem;
-        letter-spacing: 0.28em;
-        color: rgba(245,230,200,0.45);
-      }
-
-      .path-section {
-        background: rgba(255,255,255,0.016);
-        border: 1px solid rgba(200,169,110,0.11);
-        border-radius: 6px;
-        padding: 28px 22px 30px;
-        margin-bottom: 46px;
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-      }
-
-      .path-label {
-        text-align: center;
-        font-size: 0.62rem;
-        letter-spacing: 0.42em;
-        text-transform: uppercase;
-        color: rgba(245,230,200,0.28);
-        margin-bottom: 22px;
-      }
-
-      .days-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        justify-content: center;
-      }
-
-      .dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: rgba(200,169,110,0.06);
-        border: 1px solid rgba(200,169,110,0.11);
-        flex-shrink: 0;
-        transition: background 0.5s ease, box-shadow 0.5s ease;
-        cursor: default;
-      }
-
-      .dot.done {
-        background: var(--gold-glow);
-        border-color: var(--gold-light);
-        box-shadow:
-          0 0 5px  rgba(255,184,48,0.95),
-          0 0 12px rgba(255,184,48,0.45);
-      }
-
-      .dot.today:not(.done) {
-        background: rgba(200,169,110,0.22);
-        border-color: var(--gold);
-        animation: ring-pulse 2.8s ease-in-out infinite;
-      }
-
-      .dot.today.done {
-        animation: gold-pulse 2.8s ease-in-out infinite;
-      }
-
-      @keyframes ring-pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(200,169,110,0.35); }
-        50%       { box-shadow: 0 0 0 3px rgba(200,169,110,0.12),
-                                0 0 10px rgba(200,169,110,0.5); }
-      }
-
-      @keyframes gold-pulse {
-        0%, 100% { box-shadow: 0 0 5px rgba(255,184,48,0.95), 0 0 12px rgba(255,184,48,0.45); }
-        50%       { box-shadow: 0 0 10px rgba(255,184,48,1),
-                                0 0 28px rgba(255,184,48,0.65),
-                                0 0 50px rgba(255,184,48,0.25); }
-      }
-
-      .btn-area {
-        text-align: center;
-        margin-bottom: 44px;
-      }
-
-      .btn-ritual {
-        position: relative;
-        display: inline-block;
-        padding: 22px 64px;
-        background: transparent;
-        border: 1px solid rgba(200,169,110,0.6);
-        color: var(--gold-light);
-        font-family: inherit;
-        font-size: 0.8rem;
-        letter-spacing: 0.38em;
-        text-transform: uppercase;
-        cursor: pointer;
-        overflow: hidden;
-        transition: letter-spacing 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
-      }
-
-      .btn-ritual::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg,
-          rgba(200,169,110,0.08),
-          rgba(255,175,20,0.14));
-        opacity: 0;
-        transition: opacity 0.45s ease;
-      }
-
-      .btn-ritual::after {
-        content: '✦';
-        position: absolute;
-        left: 50%;
-        top: -1.2em;
-        transform: translateX(-50%);
-        font-size: 0.7rem;
-        color: var(--gold);
-        opacity: 0;
-        transition: opacity 0.4s, top 0.4s;
-      }
-
-      .btn-ritual:hover:not(:disabled)::before { opacity: 1; }
-      .btn-ritual:hover:not(:disabled)::after  { opacity: 0.7; top: -1em; }
-
-      .btn-ritual:hover:not(:disabled) {
-        letter-spacing: 0.46em;
-        border-color: var(--gold);
-        box-shadow:
-          0 0 22px rgba(200,169,110,0.28),
-          0 0 55px rgba(200,169,110,0.1);
-      }
-
-      .btn-ritual:active:not(:disabled) { transform: scale(0.97); }
-
-      .btn-ritual:disabled {
-        opacity: 0.4;
-        cursor: default;
-        border-color: rgba(200,169,110,0.22);
-      }
-
-      .btn-ritual.marked {
-        border-color: rgba(200,169,110,0.28);
-        color: rgba(245,230,200,0.42);
-      }
-
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-        text-align: center;
-      }
-
-      .stat-item {
-        background: rgba(255,255,255,0.014);
-        border: 1px solid rgba(200,169,110,0.08);
-        border-radius: 4px;
-        padding: 18px 10px;
-      }
-
-      .stat-value {
-        display: block;
-        font-size: 1.9rem;
-        font-weight: 200;
-        color: var(--gold);
-        text-shadow: 0 0 14px rgba(200,169,110,0.45);
-        margin-bottom: 7px;
-        letter-spacing: 0.02em;
-      }
-
-      .stat-label {
-        font-size: 0.6rem;
-        letter-spacing: 0.3em;
-        text-transform: uppercase;
-        color: rgba(245,230,200,0.3);
-      }
-
-      .message {
-        text-align: center;
-        font-size: 0.82rem;
-        letter-spacing: 0.12em;
-        font-style: italic;
-        color: rgba(245,230,200,0.42);
-        min-height: 1.6em;
-        margin-top: 30px;
-        transition: opacity 0.6s ease;
-      }
-    </style>
-  </head>
-  <body>
-
-  <canvas id="cosmos"></canvas>
-
-  <div class="wrapper">
-
-    <header class="header">
-      <p class="eyebrow">Anno I &ensp;·&ensp; Il Cammino Inizia</p>
-      <h1 class="title">Il Mondo<br>È Mio</h1>
-      <p class="date-range">1 Maggio 2026 &ensp;→&ensp; 1 Maggio 2027</p>
-    </header>
-
-    <section class="progress-hero">
-      <div class="pct-wrap">
-        <span class="pct-value" id="pctValue">0.0</span>
-        <span class="pct-sym">%</span>
-      </div>
-      <div class="bar-track">
-        <div class="bar-fill" id="barFill" style="width:0%"></div>
-      </div>
-      <p class="days-label" id="daysLabel">0 di 365 giorni percorsi</p>
-    </section>
-
-    <div class="path-section">
-      <p class="path-label">Il Cammino &ensp;—&ensp; ogni punto è un giorno</p>
-      <div class="days-grid" id="daysGrid"></div>
-    </div>
-
-    <div class="btn-area">
-      <button class="btn-ritual" id="btnMark" onclick="markToday()">
-        Segna questo giorno
-      </button>
-    </div>
-
-    <div class="stats">
-      <div class="stat-item">
-        <span class="stat-value" id="statDone">0</span>
-        <span class="stat-label">Giorni Compiuti</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value" id="statLeft">365</span>
-        <span class="stat-label">Giorni Rimanenti</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value" id="statStreak">0</span>
-        <span class="stat-label">Streak Attuale</span>
-      </div>
-    </div>
-
-    <p class="message" id="message"></p>
-
-  </div>
-
-  <script>
-  const START_DATE  = new Date('2026-05-01T00:00:00');
-  const TOTAL_DAYS  = 365;
-  const STORAGE_KEY = 'ilmondoemio_v2';
-
-  function loadData() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { days: [] }; }
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || { days: [] }; }
     catch { return { days: [] }; }
   }
 
-  function saveData(d) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+  function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+
+  function todayIndex() {
+    const t = new Date(); t.setHours(0,0,0,0);
+    const s = new Date(START); s.setHours(0,0,0,0);
+    return Math.floor((t - s) / 86400000);
   }
 
-  function getTodayIndex() {
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const start = new Date(START_DATE); start.setHours(0, 0, 0, 0);
-    return Math.floor((today - start) / 86400000);
-  }
-
-  function calcStreak(days) {
-    if (!days.length) return 0;
-    const set = new Set(days);
-    const ti = getTodayIndex();
-    let count = 0, cur = ti;
-    while (set.has(cur) || set.has(cur - 1)) {
-      if (set.has(cur)) { count++; cur--; }
-      else break;
+  function init() {
+    const data = load();
+    const ti = todayIndex();
+    for (let i = 0; i < ti && i < TOTAL; i++) {
+      if (!data.days.includes(i)) data.days.push(i);
     }
-    return count;
+    save(data);
   }
-
-  function markToday() {
-    const data = loadData();
-    const idx  = getTodayIndex();
-    if (idx < 0 || idx >= TOTAL_DAYS) return;
-    if (data.days.includes(idx)) return;
-    data.days.push(idx);
-    saveData(data);
-    render();
-    const btn = document.getElementById('btnMark');
-    btn.style.transition = 'none';
-    btn.style.boxShadow  = '0 0 50px rgba(255,180,48,0.7), 0 0 100px rgba(255,180,48,0.3)';
-    setTimeout(() => { btn.style.transition = ''; btn.style.boxShadow = ''; }, 700);
-  }
-
-  const QUOTES = [
-    'Ogni passo lascia un\'orma che non svanisce.',
-    'Il cammino si fa andando. Sempre.',
-    'Hai già percorso più di quanto credi.',
-    'Il mondo appartiene a chi non si ferma.',
-    'Ogni alba è un atto di coraggio.',
-    'La distanza che spaventa è già percorsa.',
-    'Guarda quanto luce hai già acceso.',
-    'Nessun giorno vissuto è mai perduto.',
-  ];
 
   function render() {
-    const data = loadData();
-    const idx  = getTodayIndex();
-    const done = data.days.length;
-    const pct  = (done / TOTAL_DAYS * 100).toFixed(1);
-    const left = Math.max(0, TOTAL_DAYS - done);
-    const str  = calcStreak(data.days);
-
-    document.getElementById('pctValue').textContent = pct;
-    document.getElementById('barFill').style.width  = pct + '%';
-    document.getElementById('daysLabel').textContent = `${done} di ${TOTAL_DAYS} giorni percorsi`;
-    document.getElementById('statDone').textContent  = done;
-    document.getElementById('statLeft').textContent  = left;
-    document.getElementById('statStreak').textContent = str;
-
-    const grid = document.getElementById('daysGrid');
+    const data = load();
+    const ti   = todayIndex();
+    const grid = document.getElementById('grid');
     grid.innerHTML = '';
-    const fragment = document.createDocumentFragment();
-    for (let i = 0; i < TOTAL_DAYS; i++) {
+    const frag = document.createDocumentFragment();
+
+    for (let i = 0; i < TOTAL; i++) {
       const dot = document.createElement('div');
       dot.className = 'dot';
       if (data.days.includes(i)) dot.classList.add('done');
-      if (i === idx)             dot.classList.add('today');
-      fragment.appendChild(dot);
+      if (i === ti)              dot.classList.add('today');
+
+      dot.addEventListener('click', () => {
+        const d = load();
+        const idx = d.days.indexOf(i);
+        if (idx === -1) d.days.push(i);
+        else d.days.splice(idx, 1);
+        save(d);
+        render();
+      });
+
+      frag.appendChild(dot);
     }
-    grid.appendChild(fragment);
-
-    const btn         = document.getElementById('btnMark');
-    const inRange     = idx >= 0 && idx < TOTAL_DAYS;
-    const alreadyDone = data.days.includes(idx);
-    btn.classList.remove('marked');
-    btn.disabled = false;
-
-    if (!inRange && idx < 0) {
-      btn.textContent = 'Il viaggio non è ancora iniziato'; btn.disabled = true;
-    } else if (!inRange) {
-      btn.textContent = 'Il viaggio è compiuto'; btn.disabled = true;
-    } else if (alreadyDone) {
-      btn.textContent = 'Questo giorno è segnato ✦'; btn.disabled = true; btn.classList.add('marked');
-    } else {
-      btn.textContent = 'Segna questo giorno';
-    }
-
-    const msgEl = document.getElementById('message');
-    if (alreadyDone && inRange)  msgEl.textContent = QUOTES[idx % QUOTES.length];
-    else if (inRange)            msgEl.textContent = 'Questo giorno è ancora in attesa di essere vissuto.';
-    else                         msgEl.textContent = '';
+    grid.appendChild(frag);
   }
 
-  (function initCosmos() {
-    const cvs = document.getElementById('cosmos');
-    const ctx = cvs.getContext('2d');
-    let W, H;
-    const stars = [], motes = [];
-
-    function resize() {
-      W = cvs.width  = window.innerWidth;
-      H = cvs.height = window.innerHeight;
-      buildParticles();
-    }
-
-    function buildParticles() {
-      stars.length = motes.length = 0;
-      const nStars = Math.round((W * H) / 5500);
-      for (let i = 0; i < nStars; i++) {
-        stars.push({ x: Math.random()*W, y: Math.random()*H*0.72,
-          r: Math.random()*1.1+0.2, alpha: Math.random()*0.75+0.2,
-          phase: Math.random()*Math.PI*2, freq: Math.random()*0.018+0.006 });
-      }
-      const nMotes = Math.round((W * H) / 12000);
-      for (let i = 0; i < nMotes; i++) {
-        motes.push({ x: Math.random()*W, y: Math.random()*H,
-          r: Math.random()*1.6+0.4, vy: Math.random()*0.55+0.12,
-          vx: (Math.random()-0.5)*0.3, alpha: Math.random()*0.55+0.12,
-          phase: Math.random()*Math.PI*2 });
-      }
-    }
-
-    function drawSky() {
-      const g = ctx.createLinearGradient(0, H, 0, 0);
-      g.addColorStop(0,    '#07050e');
-      g.addColorStop(0.22, '#110924');
-      g.addColorStop(0.45, '#1e0e1a');
-      g.addColorStop(0.65, '#3d1800');
-      g.addColorStop(0.80, '#8a3e00');
-      g.addColorStop(0.92, '#cc7000');
-      g.addColorStop(1,    '#f5b800');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-    }
-
-    function drawSun() {
-      const cx = W / 2, cy = H * 0.038;
-      const R  = Math.min(W, H) * 0.048;
-      const corona = ctx.createRadialGradient(cx, cy, R*0.8, cx, cy, H*0.52);
-      corona.addColorStop(0,    'rgba(255,225,100,0.40)');
-      corona.addColorStop(0.12, 'rgba(255,175,30,0.22)');
-      corona.addColorStop(0.30, 'rgba(220,90,0,0.09)');
-      corona.addColorStop(0.60, 'rgba(120,30,0,0.03)');
-      corona.addColorStop(1,    'rgba(0,0,0,0)');
-      ctx.fillStyle = corona;
-      ctx.fillRect(0, 0, W, H * 0.55);
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.globalAlpha = 0.055;
-      for (let i = 0; i < 14; i++) {
-        const angle = (i / 14) * Math.PI * 2;
-        const rg = ctx.createLinearGradient(0, 0, 0, H * 0.55);
-        rg.addColorStop(0, 'rgba(255,220,80,1)');
-        rg.addColorStop(1, 'rgba(255,220,80,0)');
-        ctx.save(); ctx.rotate(angle); ctx.fillStyle = rg;
-        ctx.beginPath();
-        ctx.moveTo(-R*0.04, R*0.9); ctx.lineTo(R*0.04, R*0.9);
-        ctx.lineTo(R*0.04, H*0.55); ctx.lineTo(-R*0.04, H*0.55);
-        ctx.closePath(); ctx.fill(); ctx.restore();
-      }
-      ctx.globalAlpha = 1; ctx.restore();
-      const halo = ctx.createRadialGradient(cx, cy, R*0.5, cx, cy, R*3.5);
-      halo.addColorStop(0,   'rgba(255,245,180,0.55)');
-      halo.addColorStop(0.4, 'rgba(255,200,50,0.22)');
-      halo.addColorStop(1,   'rgba(255,200,50,0)');
-      ctx.fillStyle = halo;
-      ctx.beginPath(); ctx.arc(cx, cy, R*3.5, 0, Math.PI*2); ctx.fill();
-      ctx.save();
-      const disc = ctx.createRadialGradient(cx, cy*0.92, 0, cx, cy, R);
-      disc.addColorStop(0,    'rgba(255,255,230,1)');
-      disc.addColorStop(0.35, 'rgba(255,240,120,1)');
-      disc.addColorStop(0.75, 'rgba(255,200,40,0.97)');
-      disc.addColorStop(1,    'rgba(255,155,10,0.85)');
-      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2);
-      ctx.fillStyle = disc;
-      ctx.shadowBlur = 60; ctx.shadowColor = 'rgba(255,210,60,0.9)';
-      ctx.fill(); ctx.restore();
-    }
-
-    function drawStars() {
-      stars.forEach(s => {
-        s.phase += s.freq;
-        const a = s.alpha * (0.45 + 0.55 * Math.sin(s.phase));
-        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(255,235,185,${a})`; ctx.fill();
-      });
-    }
-
-    function drawMotes() {
-      motes.forEach(m => {
-        m.phase += 0.022; m.y -= m.vy; m.x += m.vx;
-        if (m.y < -4) { m.y = H+4; m.x = Math.random()*W; }
-        if (m.x < 0 || m.x > W) m.x = Math.random()*W;
-        const a    = m.alpha * (0.55 + 0.45 * Math.sin(m.phase));
-        const frac = 1 - m.y / H;
-        const r = Math.round(160 + frac*95);
-        const g = Math.round(100 + frac*110);
-        const b = Math.round(80  + frac*10);
-        ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(${r},${g},${b},${a})`; ctx.fill();
-      });
-    }
-
-    function frame() {
-      ctx.clearRect(0, 0, W, H);
-      drawSky(); drawSun(); drawStars(); drawMotes();
-      requestAnimationFrame(frame);
-    }
-
-    resize(); frame();
-    window.addEventListener('resize', resize);
-  })();
-
+  init();
   render();
-  </script>
+</script>
 
-  </body>
-  </html>
+</body>
+</html>
