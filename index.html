@@ -15,7 +15,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 18px;
       padding: 20px;
       overflow: hidden;
       position: relative;
@@ -27,40 +27,38 @@
       inset: 0;
       background: url('scala.jpg') center 30% / cover no-repeat;
       transform: scaleX(1.6);
-      filter: brightness(0.45) saturate(1.3);
+      filter: brightness(0.38) saturate(1.2);
       z-index: 0;
     }
 
-    /* Aurora colorata animata sopra il bg */
-    .aurora {
+    /* Nebulosa calda animata */
+    .nebula {
       position: fixed;
       inset: 0;
       z-index: 1;
       background:
-        radial-gradient(ellipse 70% 55% at 20% 60%, rgba(100,30,180,0.38) 0%, transparent 70%),
-        radial-gradient(ellipse 55% 45% at 80% 40%, rgba(180,60,20,0.32) 0%, transparent 65%),
-        radial-gradient(ellipse 60% 50% at 50% 20%, rgba(255,140,0,0.22) 0%, transparent 60%),
-        radial-gradient(ellipse 80% 80% at 50% 50%, rgba(7,5,14,0.30) 0%, rgba(7,5,14,0.80) 100%);
-      animation: auroraShift 12s ease-in-out infinite alternate;
+        radial-gradient(ellipse 65% 50% at 18% 65%, rgba(200,80,0,0.28) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 82% 35%, rgba(220,120,0,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 45% at 50% 15%, rgba(255,160,20,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 35% at 70% 75%, rgba(180,60,0,0.20) 0%, transparent 60%),
+        radial-gradient(ellipse 85% 85% at 50% 50%, rgba(7,5,14,0.20) 0%, rgba(7,5,14,0.78) 100%);
+      animation: nebulaBreath 14s ease-in-out infinite alternate;
     }
 
-    @keyframes auroraShift {
-      0%   { opacity: 1; filter: hue-rotate(0deg); }
-      33%  { opacity: 0.85; filter: hue-rotate(20deg); }
-      66%  { opacity: 0.95; filter: hue-rotate(-15deg); }
-      100% { opacity: 1; filter: hue-rotate(10deg); }
+    @keyframes nebulaBreath {
+      0%   { opacity: 1; }
+      50%  { opacity: 0.80; }
+      100% { opacity: 1; }
     }
 
-    /* Overlay scuro bordi */
     .overlay {
       position: fixed;
       inset: 0;
       z-index: 2;
-      background: radial-gradient(ellipse 90% 90% at 50% 50%,
-        transparent 30%, rgba(4,2,10,0.75) 100%);
+      background: radial-gradient(ellipse 88% 88% at 50% 50%,
+        transparent 25%, rgba(4,2,10,0.72) 100%);
     }
 
-    /* Canvas stelle */
     canvas {
       position: fixed;
       inset: 0;
@@ -68,7 +66,6 @@
       pointer-events: none;
     }
 
-    /* Contenuto */
     .content {
       position: relative;
       z-index: 10;
@@ -77,7 +74,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
     }
 
     /* Percentuale */
@@ -85,12 +82,12 @@
       display: flex;
       align-items: flex-start;
       line-height: 1;
-      animation: breathe 4s ease-in-out infinite;
+      animation: breathe 5s ease-in-out infinite;
     }
 
     @keyframes breathe {
-      0%, 100% { filter: drop-shadow(0 0 18px rgba(255,184,48,0.7)) drop-shadow(0 0 45px rgba(200,100,255,0.25)); }
-      50%       { filter: drop-shadow(0 0 28px rgba(255,184,48,0.95)) drop-shadow(0 0 70px rgba(200,100,255,0.45)); }
+      0%, 100% { filter: drop-shadow(0 0 16px rgba(255,184,48,0.75)) drop-shadow(0 0 50px rgba(255,120,0,0.3)); }
+      50%       { filter: drop-shadow(0 0 28px rgba(255,215,70,1))    drop-shadow(0 0 80px rgba(255,120,0,0.5)); }
     }
 
     .pct-num {
@@ -99,57 +96,58 @@
       letter-spacing: -0.03em;
       color: #f0d060;
       text-shadow:
-        0 0 15px rgba(255,215,70,1),
-        0 0 40px rgba(255,175,20,0.65),
-        0 0 80px rgba(200,80,255,0.3);
+        0 0 12px rgba(255,215,70,1),
+        0 0 35px rgba(255,175,20,0.7),
+        0 0 70px rgba(255,100,0,0.35);
     }
 
     .pct-sym {
       font-size: clamp(1.3rem, 4vw, 2.2rem);
       font-weight: 200;
-      color: #d4a0ff;
+      color: #e8a040;
       padding-top: 0.5rem;
-      opacity: 0.9;
+      opacity: 0.85;
     }
 
     /* Griglia */
     .grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
+      gap: 5px;
       justify-content: center;
       width: 100%;
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
+      width: 13px;
+      height: 13px;
       border-radius: 50%;
-      background: rgba(160,100,220,0.08);
-      border: 1px solid rgba(160,100,220,0.22);
+      background: rgba(200,169,110,0.12);
+      border: 1.5px solid rgba(200,169,110,0.35);
       flex-shrink: 0;
       cursor: pointer;
-      transition: background 0.25s, box-shadow 0.25s, border-color 0.25s, transform 0.15s;
+      transition: background 0.2s, box-shadow 0.2s, border-color 0.2s, transform 0.15s;
     }
 
     .dot:hover {
-      background: rgba(200,140,255,0.28);
-      border-color: rgba(200,140,255,0.65);
-      transform: scale(1.35);
+      background: rgba(255,184,48,0.30);
+      border-color: rgba(255,184,48,0.75);
+      transform: scale(1.4);
+      box-shadow: 0 0 8px rgba(255,184,48,0.5);
     }
 
     .dot.done {
-      background: #ffb830;
+      background: radial-gradient(circle at 35% 35%, #ffe066, #ffb830);
       border-color: #f0d060;
       box-shadow:
-        0 0 4px  rgba(255,184,48,0.95),
-        0 0 10px rgba(255,184,48,0.45),
-        0 0 18px rgba(200,80,255,0.2);
+        0 0 5px  rgba(255,184,48,1),
+        0 0 12px rgba(255,184,48,0.55),
+        0 0 22px rgba(255,120,0,0.25);
     }
 
     .dot.today:not(.done) {
-      background: rgba(200,140,255,0.28);
-      border-color: #c77dff;
+      background: rgba(255,184,48,0.20);
+      border-color: #ffb830;
       animation: ring 2.8s ease-in-out infinite;
     }
 
@@ -158,38 +156,36 @@
     }
 
     @keyframes ring {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(180,100,255,0.5); }
-      50%       { box-shadow: 0 0 0 3px rgba(180,100,255,0.15), 0 0 10px rgba(180,100,255,0.6); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,184,48,0.6); }
+      50%       { box-shadow: 0 0 0 4px rgba(255,184,48,0.15), 0 0 12px rgba(255,184,48,0.7); }
     }
 
     @keyframes goldring {
-      0%, 100% { box-shadow: 0 0 5px rgba(255,184,48,0.95), 0 0 12px rgba(255,184,48,0.45), 0 0 22px rgba(200,80,255,0.2); }
-      50%       { box-shadow: 0 0 10px rgba(255,184,48,1), 0 0 26px rgba(255,184,48,0.7), 0 0 40px rgba(200,80,255,0.35); }
+      0%, 100% { box-shadow: 0 0 6px rgba(255,184,48,1), 0 0 14px rgba(255,184,48,0.55), 0 0 28px rgba(255,120,0,0.3); }
+      50%       { box-shadow: 0 0 10px rgba(255,215,70,1), 0 0 28px rgba(255,184,48,0.8), 0 0 50px rgba(255,120,0,0.45); }
     }
 
     /* Bottone */
     .btn {
       position: relative;
-      padding: 12px 48px;
+      padding: 12px 50px;
       background: transparent;
-      border: 1px solid rgba(180,100,255,0.50);
-      color: #d4a0ff;
+      border: 1px solid rgba(200,169,110,0.55);
+      color: #f0d060;
       font-family: inherit;
       font-size: 0.72rem;
-      letter-spacing: 0.4em;
+      letter-spacing: 0.42em;
       text-transform: uppercase;
       cursor: pointer;
       overflow: hidden;
-      transition: letter-spacing 0.4s, box-shadow 0.4s, border-color 0.4s, color 0.3s;
+      transition: letter-spacing 0.4s, box-shadow 0.4s, border-color 0.4s;
     }
 
     .btn::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg,
-        rgba(140,60,220,0.14),
-        rgba(255,140,0,0.10));
+      background: linear-gradient(135deg, rgba(200,140,0,0.14), rgba(255,160,20,0.10));
       opacity: 0;
       transition: opacity 0.35s;
     }
@@ -197,13 +193,12 @@
     .btn:hover:not(:disabled)::before { opacity: 1; }
 
     .btn:hover:not(:disabled) {
-      letter-spacing: 0.48em;
-      border-color: #c77dff;
-      color: #edd4ff;
+      letter-spacing: 0.50em;
+      border-color: #c8a96e;
       box-shadow:
-        0 0 20px rgba(160,80,255,0.35),
-        0 0 50px rgba(160,80,255,0.12),
-        inset 0 0 20px rgba(160,80,255,0.06);
+        0 0 22px rgba(200,169,110,0.38),
+        0 0 55px rgba(200,169,110,0.12),
+        inset 0 0 22px rgba(200,140,0,0.06);
     }
 
     .btn:active:not(:disabled) { transform: scale(0.97); }
@@ -211,20 +206,16 @@
     .btn:disabled {
       opacity: 0.32;
       cursor: default;
-      border-color: rgba(180,100,255,0.18);
+      border-color: rgba(200,169,110,0.18);
     }
 
-    .btn.segnato {
-      color: #f0d060;
-      border-color: rgba(200,169,110,0.28);
-      opacity: 0.55;
-    }
+    .btn.segnato { color: #f0d060; opacity: 0.5; }
   </style>
 </head>
 <body>
 
 <div class="bg-img"></div>
-<div class="aurora"></div>
+<div class="nebula"></div>
 <div class="overlay"></div>
 <canvas id="cvs"></canvas>
 
@@ -240,11 +231,11 @@
 </div>
 
 <script>
-  /* ---------- canvas stelle + mote ---------- */
+  /* ---- canvas: stelle dense + galassie + mote dorate ---- */
   (function() {
     const cvs = document.getElementById('cvs');
     const ctx = cvs.getContext('2d');
-    let W, H, stars = [], motes = [];
+    let W, H, stars = [], clusters = [], motes = [];
 
     function resize() {
       W = cvs.width  = window.innerWidth;
@@ -252,58 +243,97 @@
       build();
     }
 
+    function rand(a, b) { return a + Math.random() * (b - a); }
+
     function build() {
-      stars = []; motes = [];
-      for (let i = 0; i < 80; i++) {
+      stars = []; clusters = []; motes = [];
+
+      // stelle abbondanti
+      const n = Math.round(W * H / 2800);
+      for (let i = 0; i < n; i++) {
+        const warm = Math.random() > 0.55;
         stars.push({
-          x: Math.random()*W, y: Math.random()*H,
-          r: Math.random()*1.3+0.3,
-          a: Math.random()*0.6+0.2,
-          phase: Math.random()*Math.PI*2,
-          freq: Math.random()*0.02+0.007,
-          color: Math.random() > 0.6 ? [200,150,255] : [255,235,190]
+          x: rand(0, W), y: rand(0, H),
+          r: rand(0.3, 1.8),
+          a: rand(0.18, 0.88),
+          phase: rand(0, Math.PI * 2),
+          freq:  rand(0.006, 0.024),
+          r1: warm ? 255 : 220,
+          g1: warm ? rand(210,245) : 230,
+          b1: warm ? rand(150,200) : 255,
         });
       }
-      for (let i = 0; i < 18; i++) {
+
+      // nuclei galattici (blob luminosi sfumati)
+      for (let i = 0; i < 5; i++) {
+        clusters.push({
+          x: rand(0.1, 0.9) * W,
+          y: rand(0.1, 0.9) * H,
+          r: rand(40, 130),
+          a: rand(0.04, 0.13),
+          phase: rand(0, Math.PI * 2),
+          freq:  rand(0.003, 0.009),
+          warm: Math.random() > 0.4
+        });
+      }
+
+      // mote dorate fluttuanti
+      for (let i = 0; i < 22; i++) {
         motes.push({
-          x: Math.random()*W, y: Math.random()*H + H,
-          vy: Math.random()*0.7+0.2,
-          vx: (Math.random()-0.5)*0.5,
-          r: Math.random()*2.2+0.6,
-          a: Math.random()*0.6+0.2,
-          phase: Math.random()*Math.PI*2,
-          gold: Math.random() > 0.4
+          x: rand(0, W), y: rand(0, H) + H,
+          vy: rand(0.18, 0.75),
+          vx: rand(-0.4, 0.4),
+          r:  rand(0.8, 2.6),
+          a:  rand(0.25, 0.72),
+          phase: rand(0, Math.PI * 2)
         });
       }
     }
 
-    function frame(t) {
-      ctx.clearRect(0,0,W,H);
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
 
-      stars.forEach(s => {
-        s.phase += s.freq;
-        const a = s.a * (0.4 + 0.6 * Math.sin(s.phase));
+      // nuclei galattici
+      clusters.forEach(c => {
+        c.phase += c.freq;
+        const a = c.a * (0.6 + 0.4 * Math.sin(c.phase));
+        const grd = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r);
+        if (c.warm) {
+          grd.addColorStop(0,   `rgba(255,200,80,${a})`);
+          grd.addColorStop(0.4, `rgba(255,120,20,${a*0.5})`);
+          grd.addColorStop(1,   'rgba(255,80,0,0)');
+        } else {
+          grd.addColorStop(0,   `rgba(255,235,180,${a})`);
+          grd.addColorStop(0.5, `rgba(220,180,80,${a*0.4})`);
+          grd.addColorStop(1,   'rgba(180,100,0,0)');
+        }
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(${s.color[0]},${s.color[1]},${s.color[2]},${a})`;
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
         ctx.fill();
       });
 
-      motes.forEach(m => {
-        m.phase += 0.018;
-        m.y -= m.vy; m.x += m.vx;
-        if (m.y < -6) { m.y = H + 6; m.x = Math.random()*W; }
-        const a = m.a * (0.5 + 0.5*Math.sin(m.phase));
-        const grd = ctx.createRadialGradient(m.x,m.y,0,m.x,m.y,m.r*3);
-        if (m.gold) {
-          grd.addColorStop(0, `rgba(255,184,48,${a})`);
-          grd.addColorStop(1, 'rgba(255,140,0,0)');
-        } else {
-          grd.addColorStop(0, `rgba(180,100,255,${a})`);
-          grd.addColorStop(1, 'rgba(100,30,200,0)');
-        }
+      // stelle
+      stars.forEach(s => {
+        s.phase += s.freq;
+        const a = s.a * (0.35 + 0.65 * Math.sin(s.phase));
         ctx.beginPath();
-        ctx.arc(m.x, m.y, m.r*3, 0, Math.PI*2);
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${s.r1},${s.g1},${s.b1},${a})`;
+        ctx.fill();
+      });
+
+      // mote dorate
+      motes.forEach(m => {
+        m.phase += 0.02;
+        m.y -= m.vy; m.x += m.vx;
+        if (m.y < -8) { m.y = H + 8; m.x = Math.random() * W; }
+        const a = m.a * (0.45 + 0.55 * Math.sin(m.phase));
+        const grd = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 3.5);
+        grd.addColorStop(0, `rgba(255,200,60,${a})`);
+        grd.addColorStop(1, 'rgba(255,120,0,0)');
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.r * 3.5, 0, Math.PI * 2);
         ctx.fillStyle = grd;
         ctx.fill();
       });
@@ -316,7 +346,7 @@
     window.addEventListener('resize', resize);
   })();
 
-  /* ---------- tracker ---------- */
+  /* ---- tracker ---- */
   const START = new Date('2026-05-01T00:00:00');
   const TOTAL = 365;
   const KEY   = 'ilmondoemio_v2';
@@ -350,7 +380,7 @@
     data.days.push(ti);
     save(data);
     const btn = document.getElementById('btn');
-    btn.style.boxShadow = '0 0 50px rgba(180,80,255,0.7), 0 0 100px rgba(255,180,48,0.4)';
+    btn.style.boxShadow = '0 0 50px rgba(255,180,48,0.8), 0 0 110px rgba(255,120,0,0.4)';
     setTimeout(() => { btn.style.boxShadow = ''; }, 800);
     render();
   }
@@ -380,10 +410,10 @@
     }
     grid.appendChild(frag);
 
-    const btn       = document.getElementById('btn');
-    const inRange   = ti >= 0 && ti < TOTAL;
-    const marked    = data.days.includes(ti);
-    btn.disabled    = !inRange || marked;
+    const btn     = document.getElementById('btn');
+    const inRange = ti >= 0 && ti < TOTAL;
+    const marked  = data.days.includes(ti);
+    btn.disabled  = !inRange || marked;
     btn.classList.toggle('segnato', marked);
     btn.textContent = marked ? 'Giorno segnato ✦' : 'Segna oggi';
   }
