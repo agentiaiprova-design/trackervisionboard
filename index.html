@@ -6,7 +6,6 @@
   <title>Il Mondo È Mio</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     html, body { width: 100%; height: 100%; }
 
     body {
@@ -16,68 +15,57 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      padding: 18px 20px;
+      gap: 16px;
+      padding: 20px;
       overflow: hidden;
       position: relative;
     }
 
-    /* Sfondo scala.jpg tagliato in orizzontale */
-    body::before {
-      content: '';
+    /* Sfondo scala.jpg orizzontale */
+    .bg-img {
       position: fixed;
       inset: 0;
-      background: url('scala.jpg') center 35% / cover no-repeat;
-      transform: scaleX(1.5);
-      filter: brightness(0.55) saturate(1.1);
+      background: url('scala.jpg') center 30% / cover no-repeat;
+      transform: scaleX(1.6);
+      filter: brightness(0.45) saturate(1.3);
       z-index: 0;
     }
 
-    /* Overlay gradiente per leggibilità */
-    body::after {
-      content: '';
+    /* Aurora colorata animata sopra il bg */
+    .aurora {
       position: fixed;
       inset: 0;
-      background:
-        radial-gradient(ellipse 60% 80% at 50% 50%, rgba(7,5,14,0.25) 0%, rgba(7,5,14,0.72) 100%),
-        linear-gradient(180deg, rgba(7,5,14,0.55) 0%, rgba(7,5,14,0.2) 50%, rgba(7,5,14,0.65) 100%);
       z-index: 1;
+      background:
+        radial-gradient(ellipse 70% 55% at 20% 60%, rgba(100,30,180,0.38) 0%, transparent 70%),
+        radial-gradient(ellipse 55% 45% at 80% 40%, rgba(180,60,20,0.32) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 50% at 50% 20%, rgba(255,140,0,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 80% at 50% 50%, rgba(7,5,14,0.30) 0%, rgba(7,5,14,0.80) 100%);
+      animation: auroraShift 12s ease-in-out infinite alternate;
     }
 
-    /* Particelle stellari */
-    .stars {
+    @keyframes auroraShift {
+      0%   { opacity: 1; filter: hue-rotate(0deg); }
+      33%  { opacity: 0.85; filter: hue-rotate(20deg); }
+      66%  { opacity: 0.95; filter: hue-rotate(-15deg); }
+      100% { opacity: 1; filter: hue-rotate(10deg); }
+    }
+
+    /* Overlay scuro bordi */
+    .overlay {
       position: fixed;
       inset: 0;
       z-index: 2;
+      background: radial-gradient(ellipse 90% 90% at 50% 50%,
+        transparent 30%, rgba(4,2,10,0.75) 100%);
+    }
+
+    /* Canvas stelle */
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
       pointer-events: none;
-    }
-
-    .star {
-      position: absolute;
-      border-radius: 50%;
-      background: #fff;
-      animation: twinkle var(--d) ease-in-out infinite var(--delay);
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: var(--lo); transform: scale(1); }
-      50%       { opacity: var(--hi); transform: scale(1.4); }
-    }
-
-    /* Mote dorate fluttuanti */
-    .mote {
-      position: absolute;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,184,48,0.9), rgba(255,140,0,0));
-      animation: float var(--fd) linear infinite var(--fdelay);
-      pointer-events: none;
-    }
-
-    @keyframes float {
-      0%   { transform: translateY(110vh) translateX(0); opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 0.6; }
-      100% { transform: translateY(-10vh) translateX(var(--fx)); opacity: 0; }
     }
 
     /* Contenuto */
@@ -89,7 +77,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
 
     /* Percentuale */
@@ -97,25 +85,31 @@
       display: flex;
       align-items: flex-start;
       line-height: 1;
+      animation: breathe 4s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { filter: drop-shadow(0 0 18px rgba(255,184,48,0.7)) drop-shadow(0 0 45px rgba(200,100,255,0.25)); }
+      50%       { filter: drop-shadow(0 0 28px rgba(255,184,48,0.95)) drop-shadow(0 0 70px rgba(200,100,255,0.45)); }
     }
 
     .pct-num {
-      font-size: clamp(3rem, 10vw, 5.5rem);
+      font-size: clamp(3.2rem, 11vw, 6rem);
       font-weight: 100;
       letter-spacing: -0.03em;
       color: #f0d060;
       text-shadow:
-        0 0 20px rgba(255,215,70,0.9),
-        0 0 50px rgba(255,175,20,0.5),
-        0 0 90px rgba(255,120,0,0.25);
+        0 0 15px rgba(255,215,70,1),
+        0 0 40px rgba(255,175,20,0.65),
+        0 0 80px rgba(200,80,255,0.3);
     }
 
     .pct-sym {
-      font-size: clamp(1.2rem, 4vw, 2rem);
+      font-size: clamp(1.3rem, 4vw, 2.2rem);
       font-weight: 200;
-      color: #c8a96e;
+      color: #d4a0ff;
       padding-top: 0.5rem;
-      opacity: 0.8;
+      opacity: 0.9;
     }
 
     /* Griglia */
@@ -131,54 +125,58 @@
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: rgba(200,169,110,0.08);
-      border: 1px solid rgba(200,169,110,0.18);
+      background: rgba(160,100,220,0.08);
+      border: 1px solid rgba(160,100,220,0.22);
       flex-shrink: 0;
       cursor: pointer;
-      transition: background 0.25s, box-shadow 0.25s, border-color 0.25s;
+      transition: background 0.25s, box-shadow 0.25s, border-color 0.25s, transform 0.15s;
     }
 
     .dot:hover {
-      background: rgba(200,169,110,0.28);
-      border-color: rgba(200,169,110,0.6);
+      background: rgba(200,140,255,0.28);
+      border-color: rgba(200,140,255,0.65);
+      transform: scale(1.35);
     }
 
     .dot.done {
       background: #ffb830;
       border-color: #f0d060;
-      box-shadow: 0 0 4px rgba(255,184,48,0.95), 0 0 9px rgba(255,184,48,0.4);
+      box-shadow:
+        0 0 4px  rgba(255,184,48,0.95),
+        0 0 10px rgba(255,184,48,0.45),
+        0 0 18px rgba(200,80,255,0.2);
     }
 
     .dot.today:not(.done) {
-      background: rgba(200,169,110,0.25);
-      border-color: #c8a96e;
-      animation: ring 2.5s ease-in-out infinite;
+      background: rgba(200,140,255,0.28);
+      border-color: #c77dff;
+      animation: ring 2.8s ease-in-out infinite;
     }
 
     .dot.today.done {
-      animation: goldring 2.5s ease-in-out infinite;
+      animation: goldring 2.8s ease-in-out infinite;
     }
 
     @keyframes ring {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(200,169,110,0.45); }
-      50%       { box-shadow: 0 0 0 3px rgba(200,169,110,0.12), 0 0 8px rgba(200,169,110,0.55); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(180,100,255,0.5); }
+      50%       { box-shadow: 0 0 0 3px rgba(180,100,255,0.15), 0 0 10px rgba(180,100,255,0.6); }
     }
 
     @keyframes goldring {
-      0%, 100% { box-shadow: 0 0 4px rgba(255,184,48,0.95), 0 0 9px rgba(255,184,48,0.4); }
-      50%       { box-shadow: 0 0 8px rgba(255,184,48,1), 0 0 22px rgba(255,184,48,0.65); }
+      0%, 100% { box-shadow: 0 0 5px rgba(255,184,48,0.95), 0 0 12px rgba(255,184,48,0.45), 0 0 22px rgba(200,80,255,0.2); }
+      50%       { box-shadow: 0 0 10px rgba(255,184,48,1), 0 0 26px rgba(255,184,48,0.7), 0 0 40px rgba(200,80,255,0.35); }
     }
 
     /* Bottone */
     .btn {
       position: relative;
-      padding: 11px 44px;
+      padding: 12px 48px;
       background: transparent;
-      border: 1px solid rgba(200,169,110,0.55);
-      color: #f0d060;
+      border: 1px solid rgba(180,100,255,0.50);
+      color: #d4a0ff;
       font-family: inherit;
       font-size: 0.72rem;
-      letter-spacing: 0.38em;
+      letter-spacing: 0.4em;
       text-transform: uppercase;
       cursor: pointer;
       overflow: hidden;
@@ -189,7 +187,9 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(200,169,110,0.1), rgba(255,175,20,0.16));
+      background: linear-gradient(135deg,
+        rgba(140,60,220,0.14),
+        rgba(255,140,0,0.10));
       opacity: 0;
       transition: opacity 0.35s;
     }
@@ -197,30 +197,36 @@
     .btn:hover:not(:disabled)::before { opacity: 1; }
 
     .btn:hover:not(:disabled) {
-      letter-spacing: 0.46em;
-      border-color: #c8a96e;
-      box-shadow: 0 0 18px rgba(200,169,110,0.3), 0 0 45px rgba(200,169,110,0.1);
+      letter-spacing: 0.48em;
+      border-color: #c77dff;
+      color: #edd4ff;
+      box-shadow:
+        0 0 20px rgba(160,80,255,0.35),
+        0 0 50px rgba(160,80,255,0.12),
+        inset 0 0 20px rgba(160,80,255,0.06);
     }
 
     .btn:active:not(:disabled) { transform: scale(0.97); }
 
     .btn:disabled {
-      opacity: 0.38;
+      opacity: 0.32;
       cursor: default;
-      border-color: rgba(200,169,110,0.2);
-      color: rgba(240,208,96,0.5);
+      border-color: rgba(180,100,255,0.18);
     }
 
     .btn.segnato {
-      border-color: rgba(200,169,110,0.25);
-      color: rgba(240,208,96,0.45);
+      color: #f0d060;
+      border-color: rgba(200,169,110,0.28);
+      opacity: 0.55;
     }
   </style>
 </head>
 <body>
 
-<!-- Particelle stellari generate via JS -->
-<div class="stars" id="stars"></div>
+<div class="bg-img"></div>
+<div class="aurora"></div>
+<div class="overlay"></div>
+<canvas id="cvs"></canvas>
 
 <div class="content">
   <div class="pct">
@@ -234,51 +240,87 @@
 </div>
 
 <script>
+  /* ---------- canvas stelle + mote ---------- */
+  (function() {
+    const cvs = document.getElementById('cvs');
+    const ctx = cvs.getContext('2d');
+    let W, H, stars = [], motes = [];
+
+    function resize() {
+      W = cvs.width  = window.innerWidth;
+      H = cvs.height = window.innerHeight;
+      build();
+    }
+
+    function build() {
+      stars = []; motes = [];
+      for (let i = 0; i < 80; i++) {
+        stars.push({
+          x: Math.random()*W, y: Math.random()*H,
+          r: Math.random()*1.3+0.3,
+          a: Math.random()*0.6+0.2,
+          phase: Math.random()*Math.PI*2,
+          freq: Math.random()*0.02+0.007,
+          color: Math.random() > 0.6 ? [200,150,255] : [255,235,190]
+        });
+      }
+      for (let i = 0; i < 18; i++) {
+        motes.push({
+          x: Math.random()*W, y: Math.random()*H + H,
+          vy: Math.random()*0.7+0.2,
+          vx: (Math.random()-0.5)*0.5,
+          r: Math.random()*2.2+0.6,
+          a: Math.random()*0.6+0.2,
+          phase: Math.random()*Math.PI*2,
+          gold: Math.random() > 0.4
+        });
+      }
+    }
+
+    function frame(t) {
+      ctx.clearRect(0,0,W,H);
+
+      stars.forEach(s => {
+        s.phase += s.freq;
+        const a = s.a * (0.4 + 0.6 * Math.sin(s.phase));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${s.color[0]},${s.color[1]},${s.color[2]},${a})`;
+        ctx.fill();
+      });
+
+      motes.forEach(m => {
+        m.phase += 0.018;
+        m.y -= m.vy; m.x += m.vx;
+        if (m.y < -6) { m.y = H + 6; m.x = Math.random()*W; }
+        const a = m.a * (0.5 + 0.5*Math.sin(m.phase));
+        const grd = ctx.createRadialGradient(m.x,m.y,0,m.x,m.y,m.r*3);
+        if (m.gold) {
+          grd.addColorStop(0, `rgba(255,184,48,${a})`);
+          grd.addColorStop(1, 'rgba(255,140,0,0)');
+        } else {
+          grd.addColorStop(0, `rgba(180,100,255,${a})`);
+          grd.addColorStop(1, 'rgba(100,30,200,0)');
+        }
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.r*3, 0, Math.PI*2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+      });
+
+      requestAnimationFrame(frame);
+    }
+
+    resize();
+    frame();
+    window.addEventListener('resize', resize);
+  })();
+
+  /* ---------- tracker ---------- */
   const START = new Date('2026-05-01T00:00:00');
   const TOTAL = 365;
   const KEY   = 'ilmondoemio_v2';
 
-  /* ---------- particelle ---------- */
-  (function buildParticles() {
-    const container = document.getElementById('stars');
-    const W = window.innerWidth, H = window.innerHeight;
-
-    // stelle
-    for (let i = 0; i < 60; i++) {
-      const s = document.createElement('div');
-      s.className = 'star';
-      const size = Math.random() * 1.8 + 0.5;
-      const lo   = (Math.random() * 0.25 + 0.05).toFixed(2);
-      const hi   = (Math.random() * 0.55 + 0.35).toFixed(2);
-      const d    = (Math.random() * 3 + 1.5).toFixed(1) + 's';
-      const delay = -(Math.random() * 4).toFixed(1) + 's';
-      s.style.cssText = `
-        width:${size}px; height:${size}px;
-        left:${Math.random()*100}%; top:${Math.random()*100}%;
-        --lo:${lo}; --hi:${hi}; --d:${d}; --delay:${delay};
-        opacity:${lo};
-      `;
-      container.appendChild(s);
-    }
-
-    // mote dorate
-    for (let i = 0; i < 14; i++) {
-      const m = document.createElement('div');
-      m.className = 'mote';
-      const size = Math.random() * 3 + 1;
-      const fd   = (Math.random() * 8 + 6).toFixed(1) + 's';
-      const fd2  = -(Math.random() * 10).toFixed(1) + 's';
-      const fx   = ((Math.random() - 0.5) * 80).toFixed(0) + 'px';
-      m.style.cssText = `
-        width:${size}px; height:${size}px;
-        left:${Math.random()*100}%;
-        --fd:${fd}; --fdelay:${fd2}; --fx:${fx};
-      `;
-      container.appendChild(m);
-    }
-  })();
-
-  /* ---------- dati ---------- */
   function load() {
     try { return JSON.parse(localStorage.getItem(KEY)) || { days: [] }; }
     catch { return { days: [] }; }
@@ -295,7 +337,6 @@
   function init() {
     const data = load();
     const ti = todayIdx();
-    // segna automaticamente i giorni passati
     for (let i = 0; i < ti && i < TOTAL; i++) {
       if (!data.days.includes(i)) data.days.push(i);
     }
@@ -304,14 +345,13 @@
 
   function segnaOggi() {
     const data = load();
-    const ti   = todayIdx();
+    const ti = todayIdx();
     if (ti < 0 || ti >= TOTAL || data.days.includes(ti)) return;
     data.days.push(ti);
     save(data);
-    // flash sul bottone
     const btn = document.getElementById('btn');
-    btn.style.boxShadow = '0 0 40px rgba(255,180,48,0.75), 0 0 80px rgba(255,180,48,0.3)';
-    setTimeout(() => { btn.style.boxShadow = ''; }, 700);
+    btn.style.boxShadow = '0 0 50px rgba(180,80,255,0.7), 0 0 100px rgba(255,180,48,0.4)';
+    setTimeout(() => { btn.style.boxShadow = ''; }, 800);
     render();
   }
 
@@ -342,15 +382,14 @@
 
     const btn       = document.getElementById('btn');
     const inRange   = ti >= 0 && ti < TOTAL;
-    const alreadyDone = data.days.includes(ti);
-    btn.disabled = !inRange || alreadyDone;
-    btn.classList.toggle('segnato', alreadyDone);
-    btn.textContent = alreadyDone ? 'Giorno segnato ✦' : 'Segna oggi';
+    const marked    = data.days.includes(ti);
+    btn.disabled    = !inRange || marked;
+    btn.classList.toggle('segnato', marked);
+    btn.textContent = marked ? 'Giorno segnato ✦' : 'Segna oggi';
   }
 
   init();
   render();
 </script>
-
 </body>
 </html>
